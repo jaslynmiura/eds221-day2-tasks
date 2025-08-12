@@ -1,0 +1,81 @@
+---
+title: "day2-tasks-mack-creek"
+author: "Jaslyn Miura"
+format: html
+---
+
+```{r}
+#| warning: false
+#| message: false
+library(tidyverse)
+library(here)
+library(janitor)
+
+```
+
+```{r}
+
+mack_verts <- read_csv(here::here("data", "AS00601.csv"))
+mack_verts <- mack_verts %>% clean_names()
+
+```
+
+```{r}
+# a bit of wrangling & exploring
+
+mc_wt_5 <- mack_verts[5, 15]
+mc_length_8_20 <- mack_verts[8:20, 13]
+mc_dates <- mack_verts[, 17]
+
+```
+
+```{r}
+# make a salamander subset
+
+mc_salamanders <- mack_verts %>%
+  filter(species == "DITE")
+
+```
+
+```{r}
+
+# make a scatterplot of salamander length x weight
+
+salamander_size <- ggplot(data = mc_salamanders,
+       aes(x = length1, y = weight)) +
+  geom_point(color = "hotpink", alpha = 0.3, size = 2) + 
+  theme_minimal() + 
+  labs(title = "Size of Pacific Giant Salamanders",
+       x = "Snout-vent length (mm)",
+       y = "Weight (g)",
+       caption = "As the snouth-vent length increases weight also increases")
+
+salamander_size
+
+ggsave(here::here("figs", "salamander_size.png"), height = 6, width = 7)
+
+```
+
+```{r}
+
+mc_trout <- mack_verts %>%
+  filter(species == "ONCL")
+
+```
+
+```{r}
+
+cutthroat_size <- ggplot(data = mc_trout,
+       aes(x = length1, y = weight, color = reach)) +
+  geom_point(alpha = .5) + 
+  scale_color_manual(values = c("dodgerblue4", "darkorchid3", "goldenrod1")) +
+  facet_wrap(~reach) + 
+  labs(title = "Size of Cutthroat Trout Based on Creek Reach ",
+       x = "Length (mm)",
+       y = "Weight (g)")
+
+ggsave(here::here("figs", "cutthroat_size.png"), height = 6, width = 5)
+
+```
+
+
